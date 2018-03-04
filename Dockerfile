@@ -11,3 +11,4 @@ RUN /build.sh
 WORKDIR /go/src/udptest
 CMD ["/go/src/udptest/udpserver"]
 EXPOSE 9000
+
