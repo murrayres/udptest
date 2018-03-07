@@ -16,7 +16,7 @@ func sendResponse(conn *net.UDPConn, addr *net.UDPAddr) {
 
 
 func main() {
-    var counter int
+    var counter int64
     counter=1
     p := make([]byte, 2048)
     addr := net.UDPAddr{
@@ -35,12 +35,14 @@ func main() {
             continue
         }
         fmt.Println("received")
-        received,err := strconv.Atoi(string(p[0]))
+        first := FirstZero(p)
+        
+        received,err := strconv.ParseInt(string(p[0:first]),10,32)
 if err != nil {
         fmt.Println(err)
 }
         fmt.Println(received)
-        expecting,err:=strconv.Atoi(strconv.Itoa(counter))
+        expecting:=counter
 if err !=nil {
         fmt.Println(err)
 }
@@ -54,3 +56,19 @@ if err !=nil {
         go sendResponse(ser, remoteaddr)
     }
 }
+
+
+func FirstZero(b []byte) int {
+    min, max := 0, len(b)
+    for {
+        if min + 1 == max { return max }
+        mid := (min + max) / 2
+        if b[mid] == '\000' {
+            max = mid
+        } else {
+            min = mid
+        }
+    }
+    return len(b)
+}
+
